@@ -47,7 +47,7 @@ const avatarTarget = document.querySelector(
   '#avatar-target'
 ) as HTMLImageElement | null;
 
-// TODO: function to login
+// function to login
 const login = async (): Promise<LoginUser> => {
   if (!usernameInput || !passwordInput) {
     throw new Error('käyttäjä tai salasana kenttää ei ole');
@@ -79,9 +79,35 @@ const login = async (): Promise<LoginUser> => {
 const updateUserData = async (
   user: UpdateUser,
   token: string
-): Promise<UpdateResult> => {};
+): Promise<UpdateResult> => {
+  // ota mallia login funktiosta. metodi on PUT.
+  // Headereissä tarvitsee lähettää myös token
+};
 
-// TODO: function to add userdata (email, username and avatar image) to the
+// TODO: function to upload image
+const uploadAvatar = async (): Promise<UploadResult> => {
+  if (!avatarForm) {
+    throw new Error('avatar formii ei ooo');
+  }
+  const fd = new FormData(avatarForm);
+
+  const token = localStorage.getItem('token');
+  if (!token) {
+    throw new Error('pittää olla kirjautunut');
+  }
+
+  const options: RequestInit = {
+    method: 'POST',
+    headers: {
+      Authorization: 'Bearer ' + token,
+    },
+    body: fd,
+  };
+
+  return await fetchData<UploadResult>(apiUrl + '/users/avatar', options);
+};
+
+// function to add userdata (email, username and avatar image) to the
 // Profile DOM and Edit Profile Form
 const addUserDataToDom = (user: User): void => {
   if (!usernameTarget || !emailTarget || !avatarTarget) {
@@ -102,7 +128,7 @@ const getUserData = async (token: string): Promise<User> => {
   return await fetchData<User>(apiUrl + '/users/token', options);
 };
 
-// TODO: function to check local storage for token and if it exists fetch
+// function to check local storage for token and if it exists fetch
 // userdata with getUserData then update the DOM with addUserDataToDom
 const checkToken = async (): Promise<void> => {
   const token = localStorage.getItem('token');
@@ -121,7 +147,7 @@ const checkToken = async (): Promise<void> => {
 // call checkToken on page load to check if token exists and update the DOM
 checkToken();
 
-// TODO: login form event listener
+// login form event listener
 // event listener should call login function and save token to local storage
 // then call addUserDataToDom to update the DOM with the user data
 if (!loginForm) {
