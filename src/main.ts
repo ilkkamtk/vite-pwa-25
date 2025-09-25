@@ -1,7 +1,7 @@
 import {fetchData} from './functions';
-import {UpdateResult} from './interfaces/UpdateResult';
+// import {UpdateResult} from './interfaces/UpdateResult';
 import {UploadResult} from './interfaces/UploadResult';
-import {LoginUser, UpdateUser, User} from './interfaces/User';
+import {LoginUser, User} from './interfaces/User';
 import {apiUrl, uploadUrl} from './variables';
 
 // PWA code
@@ -25,16 +25,16 @@ const passwordInput = document.querySelector(
   '#password'
 ) as HTMLInputElement | null;
 
-const profileUsernameInput = document.querySelector(
-  '#profile-username'
-) as HTMLInputElement | null;
-const profileEmailInput = document.querySelector(
-  '#profile-email'
-) as HTMLInputElement | null;
+// const profileUsernameInput = document.querySelector(
+//   '#profile-username'
+// ) as HTMLInputElement | null;
+// const profileEmailInput = document.querySelector(
+//   '#profile-email'
+// ) as HTMLInputElement | null;
 
-const avatarInput = document.querySelector(
-  '#avatar'
-) as HTMLInputElement | null;
+// const avatarInput = document.querySelector(
+//   '#avatar'
+// ) as HTMLInputElement | null;
 
 // select profile elements from the DOM
 const usernameTarget = document.querySelector(
@@ -76,13 +76,16 @@ const login = async (): Promise<LoginUser> => {
 };
 
 // TODO: function to update user data
+/*
 const updateUserData = async (
   user: UpdateUser,
   token: string
 ): Promise<UpdateResult> => {
   // ota mallia login funktiosta. metodi on PUT.
   // Headereissä tarvitsee lähettää myös token
+
 };
+*/
 
 // TODO: function to upload image
 const uploadAvatar = async (): Promise<UploadResult> => {
@@ -131,17 +134,19 @@ const getUserData = async (token: string): Promise<User> => {
 // function to check local storage for token and if it exists fetch
 // userdata with getUserData then update the DOM with addUserDataToDom
 const checkToken = async (): Promise<void> => {
-  const token = localStorage.getItem('token');
-  if (!token) {
-    return;
-  }
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      return;
+    }
 
-  const userData = await getUserData(token);
-  if (!userData) {
-    return;
-  }
+    const userData = await getUserData(token);
+    if (!userData) {
+      return;
+    }
 
-  addUserDataToDom(userData);
+    addUserDataToDom(userData);
+  } catch (error) {}
 };
 
 // call checkToken on page load to check if token exists and update the DOM
@@ -174,4 +179,12 @@ profileForm?.addEventListener('submit', () => {});
 // TODO: avatar form event listener
 // event listener should call uploadAvatar function and update the DOM with
 // the user data by calling addUserDataToDom or checkToken
-avatarForm?.addEventListener('submit', () => {});
+avatarForm?.addEventListener('submit', async (evt) => {
+  try {
+    evt.preventDefault();
+    await uploadAvatar();
+    await checkToken();
+  } catch (error) {
+    alert((error as Error).message);
+  }
+});
