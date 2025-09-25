@@ -1,10 +1,24 @@
+import {pwaInfo} from 'virtual:pwa-info';
 import {fetchData} from './functions';
 // import {UpdateResult} from './interfaces/UpdateResult';
 import {UploadResult} from './interfaces/UploadResult';
 import {LoginUser, User} from './interfaces/User';
 import {apiUrl, uploadUrl} from './variables';
+import {registerSW} from 'virtual:pwa-register';
 
 // PWA code
+console.log(pwaInfo);
+
+const updateSW = registerSW({
+  immediate: true,
+  onNeedRefresh() {
+    console.log('on need refesh tapahtui');
+    const update = confirm('Haluutko uuren version?');
+    if (update) {
+      updateSW(true);
+    }
+  },
+});
 
 // select forms from the DOM
 const loginForm = document.querySelector(
@@ -90,7 +104,7 @@ const updateUserData = async (
 // TODO: function to upload image
 const uploadAvatar = async (): Promise<UploadResult> => {
   if (!avatarForm) {
-    throw new Error('avatar formii ei ooo');
+    throw new Error('avatar formii ei ooo si');
   }
   const fd = new FormData(avatarForm);
 
@@ -156,7 +170,7 @@ checkToken();
 // event listener should call login function and save token to local storage
 // then call addUserDataToDom to update the DOM with the user data
 if (!loginForm) {
-  console.error('login lomake puuttuu');
+  console.error('login lomake puuttuu saatana');
 } else {
   loginForm.addEventListener('submit', async (evt) => {
     try {
