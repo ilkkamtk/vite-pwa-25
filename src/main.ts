@@ -18,6 +18,10 @@ const updateSW = registerSW({
       updateSW(true);
     }
   },
+  onOfflineReady() {
+    console.log('sovellus on offline redi');
+    alert('sovellus on offline redi');
+  },
 });
 
 // select forms from the DOM
@@ -110,7 +114,7 @@ const uploadAvatar = async (): Promise<UploadResult> => {
 
   const token = localStorage.getItem('token');
   if (!token) {
-    throw new Error('pittää olla kirjautunut');
+    throw new Error('pittää olla kirjautunut si');
   }
 
   const options: RequestInit = {
